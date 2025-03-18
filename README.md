@@ -16,4 +16,4 @@ For help getting started with Flutter development, view the
 samples, guidance on mobile development, and a full API reference.
 
 
-git clone https://github.com/username/nama-repo.git
+git clone github.com/alvinlaia11/pertemuan-03/blob/main/README.md
