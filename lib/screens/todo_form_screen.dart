@@ -1,82 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'screens/todo_list_screen.dart';
+import '../models/todo.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class TodoFormScreen extends StatefulWidget {
+  const TodoFormScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Todo App',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple),
-        useMaterial3: true,
-      ),
-      home: const TodoListScreen(),
-    );
-  }
+  State<TodoFormScreen> createState() => _TodoFormScreenState();
 }
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.purple,
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: const Text(
-          'Halaman Utama',
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const TodoForm()),
-            );
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.purple,
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-          child: const Text(
-            'Tambah Todo',
-            style: TextStyle(fontSize: 16),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class TodoForm extends StatefulWidget {
-  const TodoForm({super.key});
-
-  @override
-  State<TodoForm> createState() => _TodoFormState();
-}
-
-class _TodoFormState extends State<TodoForm> {
+class _TodoFormScreenState extends State<TodoFormScreen> {
   final TextEditingController _judulController = TextEditingController();
   final TextEditingController _keteranganController = TextEditingController();
   DateTime _tanggalMulai = DateTime.now();
@@ -103,6 +36,21 @@ class _TodoFormState extends State<TodoForm> {
     }
   }
 
+  void _saveTodo() {
+    if (_judulController.text.isEmpty) return;
+
+    final todo = Todo(
+      id: DateTime.now().toString(),
+      kegiatan: _judulController.text,
+      keterangan: _keteranganController.text,
+      tanggalMulai: _tanggalMulai,
+      tanggalSelesai: _tanggalSelesai,
+      kategori: _selectedKategori,
+    );
+
+    Navigator.pop(context, todo);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -111,9 +59,7 @@ class _TodoFormState extends State<TodoForm> {
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
         ),
         title: const Text('Todos', style: TextStyle(color: Colors.white)),
       ),
@@ -198,16 +144,13 @@ class _TodoFormState extends State<TodoForm> {
               ),
               child: TextField(
                 controller: _keteranganController,
-                // maxLines: 4,
+                maxLines: 4,
                 textAlignVertical: TextAlignVertical.top,
                 decoration: const InputDecoration(
                   hintText: 'Tambah Keterangan',
-                  hintStyle: TextStyle(
-                    color: Colors.grey,
-                  ),
+                  hintStyle: TextStyle(color: Colors.grey),
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(vertical: 50),
-                  isDense: true,
+                  contentPadding: EdgeInsets.symmetric(vertical: 8),
                 ),
                 style: const TextStyle(
                   fontSize: 16,
@@ -224,14 +167,17 @@ class _TodoFormState extends State<TodoForm> {
                     children: [
                       Row(
                         children: [
-                          const Icon(Icons.calendar_today, color: Colors.black54, size: 24),
+                          const Icon(Icons.calendar_today,
+                              color: Colors.black54, size: 24),
                           const SizedBox(width: 8),
-                          Text('Tanggal Mulai',
-                              style: TextStyle(
-                                color: Colors.black87,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              )),
+                          const Text(
+                            'Tanggal Mulai',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 8),
@@ -255,7 +201,6 @@ class _TodoFormState extends State<TodoForm> {
                               fontSize: 16,
                               color: Colors.black87,
                             ),
-                            textAlign: TextAlign.center,
                           ),
                         ),
                       ),
@@ -269,14 +214,17 @@ class _TodoFormState extends State<TodoForm> {
                     children: [
                       Row(
                         children: [
-                          const Icon(Icons.calendar_today, color: Colors.black54, size: 24),
+                          const Icon(Icons.calendar_today,
+                              color: Colors.black54, size: 24),
                           const SizedBox(width: 8),
-                          Text('Tanggal Selesai',
-                              style: TextStyle(
-                                color: Colors.black87,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              )),
+                          const Text(
+                            'Tanggal Selesai',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 8),
@@ -300,7 +248,6 @@ class _TodoFormState extends State<TodoForm> {
                               fontSize: 16,
                               color: Colors.black87,
                             ),
-                            textAlign: TextAlign.center,
                           ),
                         ),
                       ),
@@ -309,10 +256,9 @@ class _TodoFormState extends State<TodoForm> {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
             Row(
               children: [
-                // Bagian kiri - Icon dan Title
                 Row(
                   children: [
                     const Icon(Icons.category, color: Colors.black54, size: 24),
@@ -327,8 +273,7 @@ class _TodoFormState extends State<TodoForm> {
                     ),
                   ],
                 ),
-                const Spacer(), // Memberikan space di antara title dan dropdown
-                // Bagian kanan - Dropdown
+                const Spacer(),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   decoration: BoxDecoration(
@@ -355,9 +300,7 @@ class _TodoFormState extends State<TodoForm> {
                     }).toList(),
                     onChanged: (String? newValue) {
                       if (newValue != null) {
-                        setState(() {
-                          _selectedKategori = newValue;
-                        });
+                        setState(() => _selectedKategori = newValue);
                       }
                     },
                   ),
@@ -366,12 +309,11 @@ class _TodoFormState extends State<TodoForm> {
             ),
             const SizedBox(height: 24),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
+                    onPressed: () => Navigator.pop(context),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.purple,
@@ -391,10 +333,7 @@ class _TodoFormState extends State<TodoForm> {
                 const SizedBox(width: 16),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {
-                      // Handle simpan
-                      Navigator.pop(context);
-                    },
+                    onPressed: _saveTodo,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.purple,
                       foregroundColor: Colors.white,
@@ -416,5 +355,12 @@ class _TodoFormState extends State<TodoForm> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _judulController.dispose();
+    _keteranganController.dispose();
+    super.dispose();
   }
 }
